@@ -1,0 +1,68 @@
+* {
+  font-family: 'QuickSand', sans-serif;
+}
+
+header {
+  background-color: #ffe893;
+  text-align: center;
+  padding: 5px;
+  width: 1300px;
+  top: 0;
+}
+
+section h2 {
+  background-color: #fcc737;
+}
+main {
+  text-align: center;
+}
+
+section {
+  border-radius: 25px;
+  border-style: solid;
+  margin: 15px;
+  width: 500px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 500px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+form input,
+form button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+#completeBookList button {
+  margin: 5px 2px;
+}
+#incompleteBookList button {
+  margin: 3px 5px;
+}
+
+footer {
+  padding: 20px;
+  width: 1300px;
+  font-weight: bold;
+  background-color: #ffe893;
+  text-align: center;
+  font-weight: bold;
+}
