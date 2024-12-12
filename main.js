@@ -16,18 +16,18 @@ const SAVED_EVENT = 'saved_books';
 const STORAGE_KEY = 'book_shelf';
 
 function addBook() {
-  const judul_buku = document.getElementById('bookFormTitle').value;
-  const penulis_buku = document.getElementById('bookFormAuthor').value;
-  const tahun_rilis_buku = document.getElementById('bookFormYear').value;
-  const isCompleted = document.getElementById('bookFormIsComplete').checked;
+  const title = document.getElementById('bookFormTitle').value;
+  const author = document.getElementById('bookFormAuthor').value;
+  const year = document.getElementById('bookFormYear').value;
+  const isComplete = document.getElementById('bookFormIsComplete').checked;
 
-  function generateBookObject(ID_buku, judul_buku, penulis_buku, tahun_rilis_buku, isCompleted) {
+  function generateBookObject(id, title, author, year, isComplete) {
     return {
-      ID_buku,
-      judul_buku,
-      penulis_buku,
-      tahun_rilis_buku,
-      isCompleted,
+      id,
+      title,
+      author,
+      year,
+      isComplete,
     };
   }
   const generatedID = generateID();
@@ -36,7 +36,7 @@ function addBook() {
     return +new Date().getTime();
   }
 
-  const bookObject = generateBookObject(generatedID, judul_buku, penulis_buku, tahun_rilis_buku, isCompleted);
+  const bookObject = generateBookObject(generatedID, title, author, year, isComplete);
   books.push(bookObject);
 
   document.dispatchEvent(new CustomEvent(RENDER_EVENT));
@@ -52,7 +52,7 @@ document.addEventListener(RENDER_EVENT, function () {
 
   for (const bookItem of books) {
     const bookElement = makeBook(bookItem);
-    if (!bookItem.isCompleted) {
+    if (!bookItem.isComplete) {
       incompletedBookList.append(bookElement);
     } else {
       completedBookList.append(bookElement);
@@ -62,25 +62,25 @@ document.addEventListener(RENDER_EVENT, function () {
 
 function makeBook(bookObject) {
   const bookTitle = document.createElement('h3');
-  bookTitle.innerText = bookObject.judul_buku;
+  bookTitle.innerText = bookObject.title;
   bookTitle.setAttribute('data-testid', 'bookItemTitle');
 
   const bookAuthor = document.createElement('p');
-  bookAuthor.innerText = 'Penulis: ' + bookObject.penulis_buku;
+  bookAuthor.innerText = 'Penulis: ' + bookObject.author;
   bookAuthor.setAttribute('data-testid', 'bookItemAuthor');
 
   const bookYear = document.createElement('p');
-  bookYear.innerText = 'Tahun: ' + bookObject.tahun_rilis_buku;
+  bookYear.innerText = 'Tahun: ' + bookObject.year;
   bookYear.setAttribute('data-testid', 'bookItemYear');
 
   const buttonContainer = document.createElement('div');
-  if (bookObject.isCompleted) {
+  if (bookObject.isComplete) {
     const undoButton = document.createElement('button');
     undoButton.innerText = 'Ulang';
     undoButton.setAttribute('data-testid', 'bookItemEditButton');
 
     undoButton.addEventListener('click', function () {
-      undoTaskFromCompleted(bookObject.ID_buku);
+      undoTaskFromCompleted(bookObject.id);
     });
 
     const deleteButton = document.createElement('button');
@@ -88,7 +88,7 @@ function makeBook(bookObject) {
     deleteButton.setAttribute('data-testid', 'bookItemDeleteButton');
 
     deleteButton.addEventListener('click', function () {
-      removeTaskFromCompleted(bookObject.ID_buku);
+      removeTaskFromCompleted(bookObject.id);
     });
 
     buttonContainer.append(undoButton, deleteButton);
@@ -96,24 +96,23 @@ function makeBook(bookObject) {
     const doneButton = document.createElement('button');
     doneButton.innerText = 'Selesai';
     doneButton.setAttribute('data-testid', 'bookItemIsCompleteButton');
-
     doneButton.addEventListener('click', function () {
-      addTaskToCompleted(bookObject.ID_buku);
+      addTaskToCompleted(bookObject.id);
     });
 
     const deleteButton = document.createElement('button');
     deleteButton.innerText = 'Hapus';
     deleteButton.setAttribute('data-testid', 'bookItemDeleteButton');
-
     deleteButton.addEventListener('click', function () {
-      removeTaskFromCompleted(bookObject.ID_buku);
+      removeTaskFromCompleted(bookObject.id);
     });
     buttonContainer.append(doneButton, deleteButton);
   }
   const container = document.createElement('div');
-  container.setAttribute('data-bookid', bookObject.ID_buku);
+  container.setAttribute('data-bookid', bookObject.id);
   container.setAttribute('data-testid', 'bookItem');
   container.append(bookTitle, bookAuthor, bookYear, buttonContainer);
+
   return container;
 }
 
@@ -122,17 +121,7 @@ function addTaskToCompleted(bookId) {
 
   if (bookTarget == null) return;
 
-  bookTarget.isCompleted = true;
-  document.dispatchEvent(new CustomEvent(RENDER_EVENT));
-  saveData();
-}
-
-function undoTaskFromCompleted(bookId) {
-  const bookTarget = findBook(bookId);
-
-  if (bookTarget == null) return;
-
-  bookTarget.isCompleted = false;
+  bookTarget.isComplete = true;
   document.dispatchEvent(new CustomEvent(RENDER_EVENT));
   saveData();
 }
@@ -147,9 +136,19 @@ function removeTaskFromCompleted(bookId) {
   saveData();
 }
 
+function undoTaskFromCompleted(bookId) {
+  const bookTarget = findBook(bookId);
+
+  if (bookTarget == null) return;
+
+  bookTarget.isComplete = false;
+  document.dispatchEvent(new CustomEvent(RENDER_EVENT));
+  saveData();
+}
+
 function findBook(bookId) {
   for (const bookItem of books) {
-    if (bookItem.ID_buku === bookId) {
+    if (bookItem.id === bookId) {
       return bookItem;
     }
   }
@@ -158,7 +157,7 @@ function findBook(bookId) {
 
 function findBookIndex(bookId) {
   for (const index in books) {
-    if (books[index].ID_buku === bookId) {
+    if (books[index].id === bookId) {
       return index;
     }
   }
@@ -192,10 +191,6 @@ function loadDataFromStorage() {
   }
   document.dispatchEvent(new CustomEvent(RENDER_EVENT));
 }
-
-document.addEventListener(SAVED_EVENT, function () {
-  alert('Data tersimpan');
-});
 
 document.getElementById('searchBook').addEventListener('submit', function (e) {
   e.preventDefault();
@@ -231,4 +226,8 @@ document.getElementById('searchBook').addEventListener('reset', function () {
   Array.from(completedBookList.children).forEach((book) => {
     book.style.display = 'block';
   });
+});
+
+document.addEventListener(SAVED_EVENT, function () {
+  alert('Data tersimpan');
 });

@@ -12,6 +12,13 @@ header {
 
 section h2 {
   background-color: #fcc737;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  font-size: 24px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 main {
   text-align: center;
@@ -51,11 +58,9 @@ body {
   margin: 0;
 }
 
-#completeBookList button {
+#completeBookList button,
+#incomplete button {
   margin: 5px 2px;
-}
-#incompleteBookList button {
-  margin: 3px 5px;
 }
 
 footer {
