@@ -62,70 +62,58 @@ document.addEventListener(RENDER_EVENT, function () {
 
 function makeBook(bookObject) {
   const bookTitle = document.createElement('h3');
-  bookTitle.innerText = 'Judul : ' + bookObject.judul_buku;
+  bookTitle.innerText = bookObject.judul_buku;
   bookTitle.setAttribute('data-testid', 'bookItemTitle');
 
   const bookAuthor = document.createElement('p');
-  bookAuthor.innerText = 'Penulis : ' + bookObject.penulis_buku;
-  bookTitle.setAttribute('data-testid', 'bookItemAuthor');
+  bookAuthor.innerText = 'Penulis: ' + bookObject.penulis_buku;
+  bookAuthor.setAttribute('data-testid', 'bookItemAuthor');
 
   const bookYear = document.createElement('p');
-  bookYear.innerText = 'Tahun terbit : ' + bookObject.tahun_rilis_buku;
-  bookTitle.setAttribute('data-testid', 'bookItemYear');
+  bookYear.innerText = 'Tahun: ' + bookObject.tahun_rilis_buku;
+  bookYear.setAttribute('data-testid', 'bookItemYear');
 
-  const bookContainer = document.createElement('div');
-  bookContainer.classList.add('inner');
-  bookContainer.append(bookTitle, bookAuthor, bookYear);
-
-  const container = document.createElement('div');
-  container.classList.add('item', 'shadow');
-  container.append(bookContainer);
-  container.setAttribute('data-testid', `book-${bookObject.ID_buku}`);
-
+  const buttonContainer = document.createElement('div');
   if (bookObject.isCompleted) {
-    container.setAttribute('bookId', bookObject.ID_buku);
-
     const undoButton = document.createElement('button');
-    undoButton.textContent = 'Ulang';
-    undoButton.classList.add('ulang-button');
-    undoButton.setAttribute('data-testid', 'bookEditItem');
+    undoButton.innerText = 'Ulang';
+    undoButton.setAttribute('data-testid', 'bookItemEditButton');
 
     undoButton.addEventListener('click', function () {
       undoTaskFromCompleted(bookObject.ID_buku);
     });
 
-    const trashButton = document.createElement('button');
-    trashButton.textContent = 'Hapus';
-    trashButton.classList.add('trash-button');
-    trashButton.setAttribute('data-testid', 'bookDeleteItem');
+    const deleteButton = document.createElement('button');
+    deleteButton.innerText = 'Hapus';
+    deleteButton.setAttribute('data-testid', 'bookItemDeleteButton');
 
-    trashButton.addEventListener('click', function () {
+    deleteButton.addEventListener('click', function () {
       removeTaskFromCompleted(bookObject.ID_buku);
     });
 
-    container.append(undoButton, trashButton);
+    buttonContainer.append(undoButton, deleteButton);
   } else {
-    container.setAttribute('bookId', bookObject.ID_buku);
-
     const doneButton = document.createElement('button');
-    doneButton.textContent = 'Selesai';
-    doneButton.classList.add('done-button');
-    doneButton.setAttribute('data-testid', 'bookIsCompleteButton');
+    doneButton.innerText = 'Selesai';
+    doneButton.setAttribute('data-testid', 'bookItemIsCompleteButton');
 
     doneButton.addEventListener('click', function () {
       addTaskToCompleted(bookObject.ID_buku);
     });
 
-    const trashButton = document.createElement('button');
-    trashButton.textContent = 'Hapus';
-    trashButton.classList.add('trash-button');
-    trashButton.setAttribute('data-testid', 'bookDeleteItem');
+    const deleteButton = document.createElement('button');
+    deleteButton.innerText = 'Hapus';
+    deleteButton.setAttribute('data-testid', 'bookItemDeleteButton');
 
-    trashButton.addEventListener('click', function () {
+    deleteButton.addEventListener('click', function () {
       removeTaskFromCompleted(bookObject.ID_buku);
     });
-    container.append(doneButton, trashButton);
+    buttonContainer.append(doneButton, deleteButton);
   }
+  const container = document.createElement('div');
+  container.setAttribute('data-bookid', bookObject.ID_buku);
+  container.setAttribute('data-testid', 'bookItem');
+  container.append(bookTitle, bookAuthor, bookYear, buttonContainer);
   return container;
 }
 
