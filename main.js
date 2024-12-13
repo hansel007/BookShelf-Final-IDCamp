@@ -18,7 +18,7 @@ const STORAGE_KEY = 'book_shelf';
 function addBook() {
   const title = document.getElementById('bookFormTitle').value;
   const author = document.getElementById('bookFormAuthor').value;
-  const year = document.getElementById('bookFormYear').value;
+  const year = parseInt(document.getElementById('bookFormYear').value, 10);
   const isComplete = document.getElementById('bookFormIsComplete').checked;
 
   function generateBookObject(id, title, author, year, isComplete) {
