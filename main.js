@@ -73,6 +73,13 @@ function makeBook(bookObject) {
   bookYear.innerText = 'Tahun: ' + bookObject.year;
   bookYear.setAttribute('data-testid', 'bookItemYear');
 
+  const editButton = document.createElement('button');
+  editButton.innerText = 'Edit';
+  editButton.setAttribute('data-testid', 'bookItemEditButton');
+  editButton.addEventListener('click', function () {
+    editBook(bookObject.id);
+  });
+
   const buttonContainer = document.createElement('div');
   if (bookObject.isComplete) {
     const undoButton = document.createElement('button');
@@ -91,7 +98,7 @@ function makeBook(bookObject) {
       removeTaskFromCompleted(bookObject.id);
     });
 
-    buttonContainer.append(undoButton, deleteButton);
+    buttonContainer.append(undoButton, editButton, deleteButton);
   } else {
     const doneButton = document.createElement('button');
     doneButton.innerText = 'Selesai';
@@ -106,7 +113,7 @@ function makeBook(bookObject) {
     deleteButton.addEventListener('click', function () {
       removeTaskFromCompleted(bookObject.id);
     });
-    buttonContainer.append(doneButton, deleteButton);
+    buttonContainer.append(doneButton, editButton, deleteButton);
   }
   const container = document.createElement('div');
   container.setAttribute('data-bookid', bookObject.id);
@@ -142,6 +149,22 @@ function undoTaskFromCompleted(bookId) {
   if (bookTarget == null) return;
 
   bookTarget.isComplete = false;
+  document.dispatchEvent(new CustomEvent(RENDER_EVENT));
+  saveData();
+}
+
+function editBook(bookId) {
+  const bookTarget = findBook(bookId);
+  if (bookTarget == null) return;
+
+  document.getElementById('bookFormTitle').value = bookTarget.title;
+  document.getElementById('bookFormAuthor').value = bookTarget.author;
+  document.getElementById('bookFormYear').value = bookTarget.year;
+  document.getElementById('bookFormIsComplete').checked = bookTarget.isComplete;
+
+  const bookIndex = findBookIndex(bookId);
+  books.splice(bookIndex, 1);
+
   document.dispatchEvent(new CustomEvent(RENDER_EVENT));
   saveData();
 }
